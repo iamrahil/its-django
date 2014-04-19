@@ -1,0 +1,31 @@
+<body>
+	{% load staticfiles %}
+	<script type="text/javascript" src="{% static "jquery.min.js" %}"></script>
+	<style type="text/css">
+	      html { height: 100% }
+	      body { height: 100%; margin: 0; padding: 0 }
+	      #map-canvas { height: 100% }
+	      #submit {
+	      	position:absolute;
+	      	z-index:300;
+	      	left:8%;
+	      	top:8%;
+	      	border: 2px solid black;
+	      	padding: 10px;
+	      }
+	</style>
+	<div><div id="map-canvas"/></div>
+	<script type="text/javascript"
+	      src="https://maps.googleapis.com/maps/api/js?libraries=geometry&amp;key=AIzaSyAJD6fLqhNgsIPyqMAhofYjcVQlKjVBEvA&amp;sensor=true">
+	</script>
+	
+	<form id="submit" action="/join/" method="post" style="">
+		{% csrf_token %}
+		<input type="text" name="name" placeholder="Name of Path"/>
+		<input type="text" name="access" placeholder="Access Level of Path"/>
+		<input name="list" type="hidden"/>
+		<input type="submit" value="SUBMIT"/>
+	</form>
+	<script type"text/javascript">STATIC_URL = "/static/";</script>
+	<script type="text/javascript" src="{% static "java.js" %}"></script>
+</body>

@@ -1,0 +1,48 @@
+<body>
+	{% load staticfiles %}
+	<script type="text/javascript" src="{% static "jquery.min.js" %}"></script>
+	<style type="text/css">
+	      html { height: 100% }
+	      body { height: 100%; margin: 0; padding: 0 }
+	      #map-canvas { 
+			  height: 100%;
+			  z-index: 1;
+		  }
+		  #info {
+			  position:absolute;
+			  /* height: 90px; */
+			  width: 450px;
+			  top: 2%;
+			  right: 10%;
+			  z-index: 300;
+			  background-color: white;
+			  border: 1px grey solid;
+		  }
+		  #info td {
+			  text-align: center;
+		  }
+	</style>
+	<table id="info">
+		<thead>
+			<tr>
+				<th>Path ID</th>
+				<th>Path Name</th>
+				<th>Path Access</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td id="info-number"></td>
+				<td id="info-name"></td>
+				<td id="info-access"></td>
+			</tr>
+		</tbody>
+	</table>
+	<div><div id="map-canvas"/></div>
+	<script type="text/javascript"
+	      src="https://maps.googleapis.com/maps/api/js?libraries=geometry&amp;key=AIzaSyAJD6fLqhNgsIPyqMAhofYjcVQlKjVBEvA&amp;sensor=true">
+	</script>
+
+	<script type"text/javascript">STATIC_URL = "/static/";</script>
+	<script type="text/javascript" src="{% static "show.js" %}"></script>
+</body>
