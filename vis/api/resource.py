@@ -5,6 +5,9 @@ class PathResource(ModelResource):
 	class Meta:
 		queryset = Path.objects.all();
 		resource_name = "path";
+		filtering = {
+			'access': ['exact', 'lt', 'lte', 'gte', 'gt'],
+		}
 
 class PointResource(ModelResource):
 	class Meta:
