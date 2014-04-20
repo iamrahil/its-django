@@ -1,4 +1,7 @@
 debug={};
+STATE = "loading";
+PATHS = [];
+MARKERS = [];
 function initialize() {
     var mapOptions = {
         center: new google.maps.LatLng(19.13285,72.915317),
@@ -50,15 +53,15 @@ function drawPath(id,name,access){
         })
         google.maps.event.addListener(flightPath,'click',function(event){
             //Path Clicked
-            showAllMarkers(this);
-            debug=this;
+            pathClicked(this,event)
         })
+        PATHS.push(flightPath);
         flightPath.setMap(map);
     });
 }
 
-//Get All Paths
-//Draw Each Path
+
+//Get All Paths, Draw Each Path
 function init(){
     $.get("/api/v1/path/?format=json").success(function(data){
         var paths = data.objects;
@@ -66,15 +69,79 @@ function init(){
             var id = paths[i].id;
             var name = paths[i].name;
             var access = paths[i].access;
-            console.log("Drawing ",name);
+            //console.log("Drawing ",name);
             drawPath(id,name,access);
         }
     })
 }
 init();
+
+//DIRTY WORK
+function pathClicked(path,event){
+    if(STATE == "loading"){
+        showAllMarkers(path);
+        STATE = "marking";
+    }
+    else if(STATE == "marking"){
+        return;
+    }
+    else if(STATE == "joining"){
+        console.log("JUNCTION ",path)
+    }
+}
+
+function markerClicked(marker,event){
+    if(STATE == "loading"){
+        return;
+    }
+    else if(STATE == "marking"){
+        console.log("The junction is",this);
+        STATE="joining";
+    }
+    else if(STATE == "joining"){
+        return;
+    }
+}
+
+function placeMarker(location,color,id){
+    // var marker = new google.maps.Marker({position:location,map:map});
+    col = {"":"","green":"","red":"red"};
+    var marker = new google.maps.Marker(
+        {
+            icon: STATIC_URL + "mark"+col[color]+".png",
+            draggable:true,
+            position:location
+        }
+    );
+    google.maps.event.addListener(marker,"click", function(event){
+        markerClicked(this,event);
+    })
+    marker.setMap(map);
+    MARKERS.push(marker);
+}
 //Click Handler to show all markers
-function showAllMarkers(path){
+
+function showAllMarkers(path,event){
     console.log(path);
+    var id = path.polylineID;
+    $.get("/api/v1/point/?format=json&path="+id).success(function(data){
+        var list = data.objects;
+        for(i in list){
+            var loc = new google.maps.LatLng(list[i].location.split(",")[1],list[i].location.split(",")[0]);
+            placeMarker(loc,"green",list[i].id);
+        }
+    })
+    /*var lat = event.latLng.lat();
+    var lng = event.latLng.lng();
+    var tl,tr,bl,br;    //TopLeft,...,BottomRight bounding box
+    $.get("/api/v1/point/?format=json&location__lte="+lng-0.001+","+lat+0.0001).success(function(data){
+        tl = data.objects;
+        for(i in  tl){
+        }
+    })*/
+    
 }
 //Click Handler on marker to select as junction
+//
 //Click Handler on all paths to select intersecting paths
+//19+-0.0001 72+-0.001
