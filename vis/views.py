@@ -9,6 +9,11 @@ def login(request):
 	c.update(csrf(request))
 	return render_to_response('index.html',c);
 
+def test(request):
+	c={};
+	c.update(csrf(request))
+	return render_to_response('test.html',c);
+
 def preview(request):
 	c={};
 	c.update(csrf(request))

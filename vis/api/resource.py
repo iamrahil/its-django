@@ -13,6 +13,9 @@ class PointResource(ModelResource):
 	class Meta:
 		queryset = Point.objects.all();
 		resource_name = "point";
+		filtering = {
+			'location': ['exact', 'lt', 'lte', 'gte', 'gt'],
+		}
 	def get_object_list(self,request):
 		if request.GET.has_key("path"):
 			path = request.GET["path"];

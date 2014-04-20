@@ -20,5 +20,6 @@ urlpatterns = patterns('',
     (r'^join/', views.assmilate),
     (r'^show/', views.preview),
     (r'^attach/', views.junction),
+    (r'^test/', views.test),
     (r'^api/', include(v1_api.urls)),
 )
