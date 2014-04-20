@@ -32,7 +32,7 @@ function drawPath(id,name,access){
             locarray[i-1] = new google.maps.LatLng(list[i].location.split(",")[1],list[i].location.split(",")[0]);
         }
         locarray[i-1] = end;
-        flightPath = new google.maps.Polyline({
+        var flightPath = new google.maps.Polyline({
             path: locarray,
             geodesic: true,
             // strokeColor: '#F27233',
