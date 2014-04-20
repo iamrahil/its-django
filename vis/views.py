@@ -14,6 +14,13 @@ def preview(request):
 	c.update(csrf(request))
 	return render_to_response('show.html',c);
 
+def junction(request):
+	c={};
+	if request.POST:
+		#Do processing, add as junction
+		pass;
+	return render_to_response('junction.html',c);
+
 def assmilate(request):
 	if request.POST:
 		# import pdb;pdb.set_trace();

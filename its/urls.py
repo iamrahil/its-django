@@ -19,5 +19,6 @@ urlpatterns = patterns('',
     (r'^login/', views.login),
     (r'^join/', views.assmilate),
     (r'^show/', views.preview),
+    (r'^attach/', views.junction),
     (r'^api/', include(v1_api.urls)),
 )
