@@ -16,7 +16,7 @@ $(document).ready(function(){
     google.maps.event.addDomListener(window, 'load', initialize);  
 })
 
-
+col = {0:"#FF0000",1:"#AA0000",2:"#00FF00",3:"#0000FF"}
 function drawPath(id,name,access){
 	var name = name || "fail";
 	var access = access || 0;
@@ -36,7 +36,8 @@ function drawPath(id,name,access){
             path: locarray,
             geodesic: true,
             // strokeColor: '#F27233',
-            strokeColor: "#"+((1<<24)*Math.random()|0).toString(16),
+            // strokeColor: "#"+((1<<24)*Math.random()|0).toString(16),
+            strokeColor: col[access],
             strokeOpacity: 1.0,
             strokeWeight: 3,
 			polylineID: id,

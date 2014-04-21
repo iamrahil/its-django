@@ -69,6 +69,7 @@ function drawPath(id,name,access){
 
 
 //Get All Paths, Draw Each Path
+//GET ALL JUNCTIONS, DO SOMETHING ABOUT THEM
 function init(){
     $.get("/api/v1/path/?format=json").success(function(data){
         var paths = data.objects;
@@ -80,6 +81,20 @@ function init(){
             drawPath(id,name,access);
         }
     })
+    $.get("/api/v1/junction/?format=json").success(function(data){
+        var junctions = data.objects;
+        for(i in junctions){
+            var junction = new google.maps.Circle({
+                strokeWeight: 0,
+                fillColor: '#FF0000',
+                fillOpacity: 0.33,
+                center: new google.maps.LatLng(junctions[i].latitude,junctions[i].longitude),
+                radius: 10,
+                clickable: false
+            })
+            junction.setMap(map);
+        }
+    });
 }
 init();
 

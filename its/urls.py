@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from vis import views
-from vis.api.resource import PathResource, PointResource
+from vis.api.resource import PathResource, PointResource, JunctionResource
 from tastypie.api import Api
 
 admin.autodiscover()
@@ -9,6 +9,7 @@ admin.autodiscover()
 v1_api = Api(api_name="v1");
 v1_api.register(PathResource());
 v1_api.register(PointResource());
+v1_api.register(JunctionResource());
 
 urlpatterns = patterns('',
     # Examples:

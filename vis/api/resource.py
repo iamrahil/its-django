@@ -1,5 +1,5 @@
 from tastypie.resources import ModelResource
-from vis.models import Point, Path
+from vis.models import Point, Path, Junction
 
 class PathResource(ModelResource):
 	class Meta:
@@ -25,3 +25,13 @@ class PointResource(ModelResource):
 			return super(PointResource,self).get_object_list(request).filter(path=path);
 		else:
 			return super(PointResource,self).get_object_list(request);
+
+class JunctionResource(ModelResource):
+	class Meta:
+		queryset = Junction.objects.all();
+		resource_name = "junction";
+		filtering = {
+			'latitude': ['exact', 'lt', 'lte', 'gte', 'gt'],
+			'longitude': ['exact', 'lt', 'lte', 'gte', 'gt'],
+			'path' : ['exact', 'lt', 'lte', 'gte', 'gt']
+		}
