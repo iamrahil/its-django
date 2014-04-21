@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.core.context_processors import csrf
 from django.shortcuts import render_to_response
-from vis.models import Path,Point
+from vis.models import Path,Point,Junction
 import json
 # Create your views here.
 def login(request):
@@ -21,14 +21,43 @@ def preview(request):
 
 def junction(request):
 	c={};
-	if request.POST:
-		#Do processing, add as junction
-		pass;
+	c.update(csrf(request))
 	return render_to_response('junction.html',c);
+
+#to process junction requests
+def join(request):
+	if request.POST:
+		# import pdb;pdb.set_trace();
+		junclist=[];
+		request_string = request.POST.get('list');
+		array = json.loads(request_string);
+		for obj in array:
+			#create junction
+			junction = Junction();
+			junction.latitude = obj['junction']['k'];
+			junction.longitude = obj['junction']['A'];
+			junction.name = "junction";
+			junction.save();
+			for pathID in obj['paths']:
+				path = Path.objects.get(id=pathID);
+				junction.paths.add(path);
+				path.junctions.add(junction);
+				path.save();
+			for pointID in obj['points']:
+				point = Point.objects.get(id=pointID);
+				point.is_junction = True;
+				point.junction = junction;
+				point.save();
+			junction.save();
+			junclist.append(junction);
+		c={"junctions":junclist};
+		return render_to_response('junction_added.html',c);
+	return render_to_response('junction_added.html',{})
+		
+
 
 def assmilate(request):
 	if request.POST:
-		import pdb;pdb.set_trace();
 		request_string = request.POST.get("list");
 		array = json.loads(request_string);
 		start_point = Point();
@@ -71,56 +100,6 @@ def assmilate(request):
 		end_point.prev_point = prevpoint;
 		prevpoint.save();
 		end_point.save();
-
-
-		
-		# request_array = request_string.split(',');
-		# array = zip(request_array[::2],request_array[1::2]);
-		# start_point = Point();
-		# start_point.latitude = array[0][0];
-		# start_point.longitude = array[0][1];
-		# start_point.field_type = "P";
-		# start_point.name="Path_Begin";
-		# start_point.save();
-		# end_point = Point();
-		# end_point.latitude = array[-1][0];
-		# end_point.longitude = array[-1][1];
-		# end_point.field_type = "P";
-		# end_point.name="Path_End";
-		# end_point.save();
-
-		# path = Path()
-		# path.start = start_point;
-		# path.end = end_point;
-		# path.name = request.POST.get("name");
-		# path.access = 0;
-		# path.save();
-
-		# start_point.path = path;
-		# end_point.path = path;
-		# start_point.save();
-		# end_point.save();
-		# prevpoint = start_point;
-		# newpoint = end_point;
-		# for i in array[1:-1]:
-		# 	# import pdb;
-		# 	# pdb.set_trace();
-		# 	newpoint = Point();
-		# 	newpoint.latitude = i[0];
-		# 	newpoint.longitude = i[0];
-		# 	newpoint.path = path;
-		# 	newpoint.field_type="P";
-		# 	newpoint.name="MidPoint";
-		# 	newpoint.save();
-		# 	prevpoint.next_point = newpoint;
-		# 	newpoint.prev_point = prevpoint;
-		# 	newpoint.save();
-		# 	prevpoint.save();
-		# 	prevpoint = newpoint;
-		# prevpoint.next_point = end_point;
-		# end_point.prev_point = prevpoint;
-		# prevpoint.save();
-		# end_point.save();
 		c = {"path":path};
 		return render_to_response('find.html',c);
 	return render_to_response('find.html',{})

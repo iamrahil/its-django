@@ -2,6 +2,13 @@ debug={};
 STATE = "loading";
 PATHS = [];
 MARKERS = [];
+OUTPUT = {
+    "junction":{},
+    "points":[],
+    "paths":[]
+}
+OUTPUT_FINAL=[];
+
 function initialize() {
     var mapOptions = {
         center: new google.maps.LatLng(19.13285,72.915317),
@@ -79,6 +86,7 @@ init();
 //DIRTY WORK
 function pathClicked(path,event){
     if(STATE == "loading"){
+        OUTPUT["paths"].push(path.polylineID);
         showAllMarkers(path);
         STATE = "marking";
     }
@@ -86,7 +94,11 @@ function pathClicked(path,event){
         return;
     }
     else if(STATE == "joining"){
-        console.log("JUNCTION ",path)
+        // console.log("JUNCTION ",path)
+        path.setOptions({strokeWeight:7});
+        clearMarkers();
+        showPartialMarkers(path,bl,tr);
+        OUTPUT["paths"].push(path.polylineID);
     }
 }
 
@@ -95,11 +107,17 @@ function markerClicked(marker,event){
         return;
     }
     else if(STATE == "marking"){
-        console.log("The junction is",this);
+        console.log("The junction is",marker);
+        map.setOptions({center:marker.position, zoom:21})
+        junction = marker;
+        OUTPUT["junction"] = marker.position;
+        OUTPUT["points"].push(marker.pointID);
+        drawJunction(marker);
         STATE="joining";
     }
     else if(STATE == "joining"){
-        return;
+        marker.setOptions({icon: STATIC_URL + "markblue.png"});
+        OUTPUT["points"].push(marker.pointID);
     }
 }
 
@@ -109,8 +127,9 @@ function placeMarker(location,color,id){
     var marker = new google.maps.Marker(
         {
             icon: STATIC_URL + "mark"+col[color]+".png",
-            draggable:true,
-            position:location
+            draggable:false,
+            position:location,
+            pointID: id
         }
     );
     google.maps.event.addListener(marker,"click", function(event){
@@ -122,7 +141,6 @@ function placeMarker(location,color,id){
 //Click Handler to show all markers
 
 function showAllMarkers(path,event){
-    console.log(path);
     var id = path.polylineID;
     $.get("/api/v1/point/?format=json&path="+id).success(function(data){
         var list = data.objects;
@@ -131,17 +149,64 @@ function showAllMarkers(path,event){
             placeMarker(loc,"green",list[i].id);
         }
     })
-    /*var lat = event.latLng.lat();
-    var lng = event.latLng.lng();
-    var tl,tr,bl,br;    //TopLeft,...,BottomRight bounding box
-    $.get("/api/v1/point/?format=json&location__lte="+lng-0.001+","+lat+0.0001).success(function(data){
-        tl = data.objects;
-        for(i in  tl){
-        }
-    })*/
     
+}
+
+function showPartialMarkers(path,bottomLeft,topRight){
+    var id = path.polylineID;
+    $.get("/api/v1/point/?format=json&latitude__gte="+bottomLeft.lat()+"&longitude__gte="+bottomLeft.lng()+"&latitude__lte="+topRight.lat()+"&longitude__lte="+topRight.lng()+"&path="+id).success(function(data){
+        var list=data.objects;
+        for(i in list){
+            var loc = new google.maps.LatLng(list[i].latitude,list[i].longitude);
+            placeMarker(loc,"green",list[i].id);   
+        }
+    });
+}
+
+
+function clearMarkers(){
+    for(i in MARKERS){
+        MARKERS[i].setMap(null);
+    }
+    MARKERS=[];
+}
+
+function drawJunction(marker){
+    var url = STATIC_URL + "mark"+"blue"+".png";
+    debug = marker;
+    marker.setOptions({icon: url});
+    var loc = marker.position;
+    bl = new google.maps.LatLng(loc.lat()-0.00005,loc.lng()-0.00007);
+    tr = new google.maps.LatLng(loc.lat()+0.00005,loc.lng()+0.00007);
+    rectangle = new google.maps.Rectangle({
+        clickable: false,
+        strokeColor: '#DB3300',
+        strokeOpacity: 0.3,
+        strokeWeight: 1,
+        fillColor: "#00DD00",
+        fillOpacity: 0.1,
+        bounds: new google.maps.LatLngBounds(bl,tr)
+    });
+    rectangle.setMap(map);
 }
 //Click Handler on marker to select as junction
 //
 //Click Handler on all paths to select intersecting paths
-//19+-0.0001 72+-0.001
+function next(){
+    OUTPUT_FINAL.push(OUTPUT);
+    OUTPUT = {
+    "junction":{},
+    "points":[],
+    "paths":[]
+    }
+    STATE="loading";
+    clearMarkers();
+    MARKERS=[];
+    rectangle.setOptions({fillOpacity:0.8});
+}
+
+$("#submit").submit(function(event){
+    //TODO: make this proper
+        document.forms[0].list.value = JSON.stringify(OUTPUT_FINAL);
+})
+//TODO: Make it user friendly

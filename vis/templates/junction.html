@@ -5,8 +5,25 @@
 		html { height: 100% }
 		body { height: 100%; margin: 0; padding: 0 }
 		#map-canvas { height: 100% }
+		#float {
+			position: absolute;
+			width: 150px;
+			height: 50px;
+			background-color: rgba(180,180,180,0.65);
+			bottom: 10%;
+			right: 10%;
+			z-index: 200;
+		}
 	</style>
 	<div><div id="map-canvas"/></div>
+	<div id="float">
+		<button id="done" onclick="next()" >Done</button>
+		<form action="/weld/" id="submit" method="POST">
+			{% csrf_token %}
+			<input id="output" name="list" type="hidden" />
+			<input type="submit" value="Finish"/>
+		</form>
+	</div>
 	<script type="text/javascript"
 	      src="https://maps.googleapis.com/maps/api/js?libraries=geometry&amp;key=AIzaSyAJD6fLqhNgsIPyqMAhofYjcVQlKjVBEvA&amp;sensor=true">
 	</script>

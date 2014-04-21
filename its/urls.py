@@ -21,5 +21,6 @@ urlpatterns = patterns('',
     (r'^show/', views.preview),
     (r'^attach/', views.junction),
     (r'^test/', views.test),
+    (r'^weld/', views.join),    #INSANITY NOMENCLATURE
     (r'^api/', include(v1_api.urls)),
 )

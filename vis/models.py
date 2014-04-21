@@ -15,6 +15,7 @@ class Point(models.Model):
     can_prev = models.BooleanField(default=True);
     path = models.ForeignKey('Path', null=True, blank=True);
     is_junction = models.BooleanField(default=False);
+    junction = models.ForeignKey('Junction', null=True, blank=True,related_name="junction");
 
     def __unicode__(self):
         return self.name;

@@ -37,7 +37,7 @@ function transcend(latlng){
     lte = {};
     gte = {};
     // var url = "/api/v1/point/?format=json&location__lte="+latlng.lng()+","+latlng.lat();
-    var url = "/api/v1/point/?format=json&longitude__lte="+latlng.lng();
+    var url = "/api/v1/point/?format=json&latitude__lte="+latlng.lat()+"&longitude__lte="+latlng.lng();
     console.log("URL IS",url);
     $.get(url).success(function(data){
         lte = data.objects;
@@ -47,7 +47,7 @@ function transcend(latlng){
             placeMarker(loc,"green");
         }
     });
-    $.get("/api/v1/point/?format=json&longitude__gte="+latlng.lng()).success(function(data){
+    $.get("/api/v1/point/?format=json&latitude__gte="+latlng.lat()+"&longitude__gte="+latlng.lng()).success(function(data){
         gte = data.objects;
         for(i in gte){
             var loc = new google.maps.LatLng(gte[i].latitude,gte[i].longitude);
@@ -56,4 +56,3 @@ function transcend(latlng){
 
     });
 }
-$.get("/api/v1/point/?format=json&location__lte=72.9089366645,19.1248606109").success(function(data){list=data})
