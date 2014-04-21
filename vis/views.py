@@ -4,6 +4,10 @@ from django.shortcuts import render_to_response
 from vis.models import Path,Point,Junction
 import json
 # Create your views here.
+def index(request):
+	c={};
+	return render_to_response('index.html',c);
+
 def login(request):
 	c={};
 	c.update(csrf(request))
