@@ -28,19 +28,19 @@ def junction(request):
 
 def assmilate(request):
 	if request.POST:
-		# import pdb;pdb.set_trace();
+		import pdb;pdb.set_trace();
 		request_string = request.POST.get("list");
 		array = json.loads(request_string);
 		start_point = Point();
 		end_point = Point();
-		start_point.location.latitude = array[0]['A'];
-		start_point.location.longitude = array[0]['k'];
+		start_point.latitude = array[0]['k'];
+		start_point.longitude = array[0]['A'];
 		start_point.name = "Path Begin";
 		start_point.field_type = "P";
 		start_point.save();
 
-		end_point.location.latitude = array[-1]['A'];
-		end_point.location.longitude = array[-1]['k'];
+		end_point.latitude = array[-1]['k'];
+		end_point.longitude = array[-1]['A'];
 		end_point.name = "Path End";
 		end_point.field_type = "P";
 		end_point.save();
@@ -58,8 +58,8 @@ def assmilate(request):
 		prevpoint = start_point;
 		for i in array[1:-1]:
 			newpoint = Point();
-			newpoint.location.latitude = i['A'];
-			newpoint.location.longitude = i['k'];
+			newpoint.latitude = i['k'];
+			newpoint.longitude = i['A'];
 			newpoint.path = path;
 			newpoint.name = "MidPoint";
 			prevpoint.next_point = newpoint;
@@ -77,14 +77,14 @@ def assmilate(request):
 		# request_array = request_string.split(',');
 		# array = zip(request_array[::2],request_array[1::2]);
 		# start_point = Point();
-		# start_point.location.latitude = array[0][0];
-		# start_point.location.longitude = array[0][1];
+		# start_point.latitude = array[0][0];
+		# start_point.longitude = array[0][1];
 		# start_point.field_type = "P";
 		# start_point.name="Path_Begin";
 		# start_point.save();
 		# end_point = Point();
-		# end_point.location.latitude = array[-1][0];
-		# end_point.location.longitude = array[-1][1];
+		# end_point.latitude = array[-1][0];
+		# end_point.longitude = array[-1][1];
 		# end_point.field_type = "P";
 		# end_point.name="Path_End";
 		# end_point.save();
@@ -106,8 +106,8 @@ def assmilate(request):
 		# 	# import pdb;
 		# 	# pdb.set_trace();
 		# 	newpoint = Point();
-		# 	newpoint.location.latitude = i[0];
-		# 	newpoint.location.longitude = i[0];
+		# 	newpoint.latitude = i[0];
+		# 	newpoint.longitude = i[0];
 		# 	newpoint.path = path;
 		# 	newpoint.field_type="P";
 		# 	newpoint.name="MidPoint";

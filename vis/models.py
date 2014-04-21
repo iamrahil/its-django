@@ -5,6 +5,8 @@ from geoposition.fields import GeopositionField
 
 class Point(models.Model):
     location = GeopositionField();
+    latitude = models.DecimalField(max_digits=12,decimal_places=10,default=0);
+    longitude = models.DecimalField(max_digits=12,decimal_places=10,default=0);
     field_type = models.CharField(max_length=1);
     name = models.CharField(max_length=60, null=True,blank=True);
     next_point= models.ForeignKey('Point', null=True, blank=True,related_name="following_point");
@@ -19,6 +21,8 @@ class Point(models.Model):
 
 class Junction(models.Model):
     location = GeopositionField();
+    latitude = models.DecimalField(max_digits=12,decimal_places=10,default=0);
+    longitude = models.DecimalField(max_digits=12,decimal_places=10,default=0);
     name = models.TextField(blank=True);
     paths = models.ManyToManyField("Path");
     
@@ -37,6 +41,8 @@ class Path(models.Model):
 
 class Location(models.Model):
     location = GeopositionField();
+    latitude = models.DecimalField(max_digits=12,decimal_places=10,default=0);
+    longitude = models.DecimalField(max_digits=12,decimal_places=10,default=0);
     name = models.TextField();
     information = models.TextField(blank=True);
     field_type = models.CharField(max_length=1);

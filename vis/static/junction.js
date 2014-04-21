@@ -28,11 +28,11 @@ function drawPath(id,name,access){
     $.get("/api/v1/point/?format=json&path="+id).success(function(data){
         resp=data
         var list = resp.objects;
-        var start = new google.maps.LatLng(list[0].location.split(",")[1],list[0].location.split(",")[0]);
-        var end = new google.maps.LatLng(list[1].location.split(",")[1],list[1].location.split(",")[0]);
+        var start = new google.maps.LatLng(list[0].latitude,list[0].longitude);
+        var end = new google.maps.LatLng(list[1].latitude,list[1].longitude);
         locarray[0]=start;
         for(i=2;i<resp.meta.total_count;i++){
-            locarray[i-1] = new google.maps.LatLng(list[i].location.split(",")[1],list[i].location.split(",")[0]);
+            locarray[i-1] = new google.maps.LatLng(list[i].latitude,list[i].longitude);
         }
         locarray[i-1] = end;
         var flightPath = new google.maps.Polyline({
@@ -127,7 +127,7 @@ function showAllMarkers(path,event){
     $.get("/api/v1/point/?format=json&path="+id).success(function(data){
         var list = data.objects;
         for(i in list){
-            var loc = new google.maps.LatLng(list[i].location.split(",")[1],list[i].location.split(",")[0]);
+            var loc = new google.maps.LatLng(list[i].latitude,list[i].longitude);
             placeMarker(loc,"green",list[i].id);
         }
     })

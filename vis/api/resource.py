@@ -15,6 +15,8 @@ class PointResource(ModelResource):
 		resource_name = "point";
 		filtering = {
 			'location': ['exact', 'lt', 'lte', 'gte', 'gt'],
+			'latitude': ['exact', 'lt', 'lte', 'gte', 'gt'],
+			'longitude': ['exact', 'lt', 'lte', 'gte', 'gt'],
 			'path' : ['exact','lt']
 		}
 	def get_object_list(self,request):

@@ -36,20 +36,21 @@ marker.setMap(map);
 function transcend(latlng){
     lte = {};
     gte = {};
-    var url = "/api/v1/point/?format=json&location__lte="+latlng.lng()+","+latlng.lat();
+    // var url = "/api/v1/point/?format=json&location__lte="+latlng.lng()+","+latlng.lat();
+    var url = "/api/v1/point/?format=json&longitude__lte="+latlng.lng();
     console.log("URL IS",url);
     $.get(url).success(function(data){
         lte = data.objects;
         console.log(lte);
         for(i in lte){
-            var loc = new google.maps.LatLng(lte[i].location.split(",")[1],lte[i].location.split(",")[0]);
+            var loc = new google.maps.LatLng(lte[i].latitude,lte[i].longitude);
             placeMarker(loc,"green");
         }
     });
-    $.get("/api/v1/point/?format=json&location__gte="+latlng.lng()+","+latlng.lat()).success(function(data){
+    $.get("/api/v1/point/?format=json&longitude__gte="+latlng.lng()).success(function(data){
         gte = data.objects;
         for(i in gte){
-            var loc = new google.maps.LatLng(gte[i].location.split(",")[1],gte[i].location.split(",")[0]);
+            var loc = new google.maps.LatLng(gte[i].latitude,gte[i].longitude);
             placeMarker(loc,"red");
         }
 
