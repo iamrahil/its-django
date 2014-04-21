@@ -7,7 +7,7 @@ import json
 def login(request):
 	c={};
 	c.update(csrf(request))
-	return render_to_response('index.html',c);
+	return render_to_response('path.html',c);
 
 def test(request):
 	c={};
