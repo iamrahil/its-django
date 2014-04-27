@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     (r'^show/', views.preview),
     (r'^attach/', views.junction),
     (r'^test/', views.test),
+    (r'^summon/', views.shortestpath),
     (r'^weld/', views.join),    #INSANITY NOMENCLATURE
     (r'^api/', include(v1_api.urls)),
     (r'^showjunction/', views.show_junctions),
