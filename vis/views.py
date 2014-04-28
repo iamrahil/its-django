@@ -95,10 +95,10 @@ def assmilate(request):
 			newpoint.longitude = i['A'];
 			newpoint.path = path;
 			newpoint.name = "MidPoint";
-			prevpoint.next_point = newpoint;
 			newpoint.prev_point = prevpoint;
-			prevpoint.save();
 			newpoint.save();
+			prevpoint.next_point = newpoint;
+			prevpoint.save();
 			prevpoint = newpoint;
 		prevpoint.next_point = end_point;
 		end_point.prev_point = prevpoint;
