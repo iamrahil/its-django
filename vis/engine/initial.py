@@ -194,24 +194,6 @@ def getsplitpath(path, source, destin):
 
 	return locarray;
 
-def getNearestPoint(source):
-	magnification = 1;
-	path_points = getNearby(source,magnification);
-	while len(path_points) is 0:
-		magnification = magnification * 1.5;
-		path_points = getNearby(source,magnification);
-
-	#get nearest point of source
-	min_point = Point();
-	min_dist = 20000000;
-	for point in path_points:
-		dist = pointDistance(source,point);
-		if dist < min_dist:
-			min_point = point;
-			min_dist = dist;
-	return min_point;
-
-
 def generic_shortestpath(source_loc,destination_loc,access=3):
 	source = Point();
 	source.latitude = source_loc['k'];

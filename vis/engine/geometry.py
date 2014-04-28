@@ -44,3 +44,19 @@ def getNearbyLoc(point,mag=1):
 	query = Point.objects.filter(latitude__gte=bl["latitude"],longitude__gte=bl["longitude"],latitude__lte=tr["latitude"],longitude__lte=tr["longitude"]);
 	return query;
 
+def getNearestPoint(source):
+	magnification = 1;
+	path_points = getNearby(source,magnification);
+	while len(path_points) is 0:
+		magnification = magnification * 1.5;
+		path_points = getNearby(source,magnification);
+
+	#get nearest point of source
+	min_point = Point();
+	min_dist = 20000000;
+	for point in path_points:
+		dist = pointDistance(source,point);
+		if dist < min_dist:
+			min_point = point;
+			min_dist = dist;
+	return min_point;
