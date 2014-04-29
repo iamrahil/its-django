@@ -134,6 +134,7 @@ print "Building Cycle Network";
 print "Building Pedestrian Network";
 pedestrian_network(PEDESTRIAN);
 
+#from junction number alpha to junction number beta
 def shortestpath(alpha,beta,level=3):
 	if level is 0:
 		graph = CAR;
