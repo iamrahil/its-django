@@ -24,6 +24,7 @@
 	
 	<form id="submit" action="/join/" method="post" style="">
 		{% csrf_token %}
+		<input name="id" type="hidden"/>
 		<input type="text" name="name" placeholder="Name of Path"/>
 		<input type="text" name="access" placeholder="Access Level of Path"/>
 		<input name="list" type="hidden"/>

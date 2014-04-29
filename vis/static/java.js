@@ -61,6 +61,31 @@ function placeMarker(location){
 $(document).ready(function(){
 
     google.maps.event.addDomListener(window, 'load', initialize);
+    if (window.location.hash!=""){
+        var id = window.location.hash.split("#")[1];
+        drawPath(id);
+    }
+function drawPath(id){
+    var resp={};
+    $.get("/api/v1/point/?format=json&path="+id).success(function(data){
+        resp=data
+        var list = resp.objects;
+        var start = new google.maps.LatLng(list[0].latitude,list[0].longitude);
+        placeMarker(start);
+        var end = new google.maps.LatLng(list[1].latitude,list[1].longitude);
+        for(i=2;i<resp.meta.total_count;i++){
+            var loc = new google.maps.LatLng(list[i].latitude,list[i].longitude);
+            placeMarker(loc); 
+        }
+        placeMarker(end);
+        $.get("/api/v1/path/"+id+"/?format=json").success(function(data){
+            document.forms[0].id.value=data.id;
+            document.forms[0].name.value=data.name;
+            document.forms[0].access.value=data.access;
+        })
+
+    });
+}
     
 })
 function getCookie(name) {
