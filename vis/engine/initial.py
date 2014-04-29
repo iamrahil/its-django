@@ -163,7 +163,8 @@ def shortestpath(alpha,beta,level=3):
 	obj = {"length":int(weight),"array":path,"details":details}
 	
 	return obj;
-
+def getDirection(junction,frompath,topath):
+	pass;
 #TODO Check this function for edge cases
 def getsplitpath(path, source, destin):
 	start = Point.objects.get(junction=source,path=path);

@@ -1,6 +1,6 @@
 from math import sin, cos, atan2, radians, sqrt
 
-from vis.models import Point
+from vis.models import Point,Junction
 
 def haversine(lat1,long1,lat2,long2):
 	R = 6373.0;
@@ -32,6 +32,16 @@ def getNearby(point,mag=1):
 	tr = {"latitude": lat+Decimal(0.00005*mag),"longitude": lon+Decimal(0.00007*mag)}
 
 	query = Point.objects.filter(latitude__gte=bl["latitude"],longitude__gte=bl["longitude"],latitude__lte=tr["latitude"],longitude__lte=tr["longitude"]);
+	return query;
+
+def getNearbyJunctions(point,mag=1):
+	lat = point.latitude;
+	lon = point.longitude;
+
+	bl = {"latitude": lat-Decimal(0.00005*mag),"longitude": lon-Decimal(0.00007*mag)}
+	tr = {"latitude": lat+Decimal(0.00005*mag),"longitude": lon+Decimal(0.00007*mag)}
+
+	query = Junction.objects.filter(latitude__gte=bl["latitude"],longitude__gte=bl["longitude"],latitude__lte=tr["latitude"],longitude__lte=tr["longitude"]);
 	return query;
 
 def getNearbyLoc(point,mag=1):

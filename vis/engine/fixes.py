@@ -1,5 +1,5 @@
 from vis.models  import *
-
+from vis.engine.geometry import getNearbyJunctions
 def no_next():
 	paths = Path.objects.all();
 
@@ -33,6 +33,15 @@ def path_end_junction():
 		if point.is_junction:
 			continue;
 		else:
+			#Search Nearby
+			nearby = getNearbyJunctions(point);
+			if len(nearby) is not 0:
+				print "Found",nearby,"nearby";
+				what=raw_input();
+				if what is 'y':
+					pass;
+				else:
+					return;
 			print "Fixing Path "+str(path.id);
 			point.is_junction=True;
 			junction = Junction();
