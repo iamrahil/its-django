@@ -25,3 +25,50 @@ def prev_next():
 		point.prev_point = None;
 		point.save();
 	return;
+
+def path_end_junction():
+	paths  = Path.objects.all();
+	for path in paths:
+		point = path.end;
+		if point.is_junction:
+			continue;
+		else:
+			print "Fixing Path "+str(path.id);
+			point.is_junction=True;
+			junction = Junction();
+			junction.name = 'Path End Junction';
+			junction.latitude = point.latitude;
+			junction.longitude = point.longitude;
+			junction.save();
+			junction.paths.add(path);
+			junction.save();
+			path.junctions.add(junction);
+			point.junction = junction;
+			point.save();
+			path.save();
+	return paths;
+
+def path_start_junction():
+	paths  = Path.objects.all();
+	for path in paths:
+		point = path.start;
+		if point.is_junction:
+			continue;
+		else:
+			print "Fixing Path "+str(path.id);
+			point.is_junction=True;
+			junction = Junction();
+			junction.name = 'Path Begin Junction';
+			junction.latitude = point.latitude;
+			junction.longitude = point.longitude;
+			junction.save();
+			junction.paths.add(path);
+			junction.save();
+			path.junctions.add(junction);
+			point.junction = junction;
+			point.save();
+			path.save();
+	return paths;
+
+def point_not_junction(junction,path):
+	pass;

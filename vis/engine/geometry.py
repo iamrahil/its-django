@@ -20,3 +20,16 @@ def haversine(lat1,long1,lat2,long2):
 
 def pointDistance(A, B):
 	return haversine(A.latitude,A.longitude,B.latitude,B.longitude);
+
+
+from decimal import *
+
+def getNearby(point):
+	lat = point.latitude;
+	lon = point.longitude;
+
+	bl = {"latitude": lat-Decimal(0.00005),"longitude": lon-Decimal(0.00007)}
+	tr = {"latitude": lat+Decimal(0.00005),"longitude": lon+Decimal(0.00007)}
+
+	query = Point.objects.filter(latitude__gte=bl["latitude"],longitude__gte=bl["longitude"],latitude__lte=tr["latitude"],longitude__lte=tr["longitude"]);
+	return query;

@@ -40,6 +40,8 @@ INSTALLED_APPS = (
     'geoposition',
     'tastypie',
     'south',
+    # 'dajaxice',
+    # 'dajax'
 )
 
 MIDDLEWARE_CLASSES = (

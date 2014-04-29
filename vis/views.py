@@ -23,6 +23,11 @@ def preview(request):
 	c.update(csrf(request))
 	return render_to_response('show.html',c);
 
+def show_junctions(request):
+	c={};
+	c.update(csrf(request))
+	return render_to_response('show_junctions.html',c);
+
 def junction(request):
 	c={};
 	c.update(csrf(request))
