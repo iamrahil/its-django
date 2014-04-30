@@ -136,6 +136,6 @@ def shortestpath(request):
 		else :
 			path=None;
 			weight=None;
-		obj = {"length":weight*1000,"array":path}
+		obj = {"length":weight,"array":path}
 		jsondata = json.dumps(obj);
 		return HttpResponse(jsondata,content_type='application/json');
