@@ -24,12 +24,23 @@ def pointDistance(A, B):
 
 from decimal import *
 
-def getNearby(point):
+def getNearby(point,mag=1):
 	lat = point.latitude;
 	lon = point.longitude;
 
-	bl = {"latitude": lat-Decimal(0.00005),"longitude": lon-Decimal(0.00007)}
-	tr = {"latitude": lat+Decimal(0.00005),"longitude": lon+Decimal(0.00007)}
+	bl = {"latitude": lat-Decimal(0.00005*mag),"longitude": lon-Decimal(0.00007*mag)}
+	tr = {"latitude": lat+Decimal(0.00005*mag),"longitude": lon+Decimal(0.00007*mag)}
 
 	query = Point.objects.filter(latitude__gte=bl["latitude"],longitude__gte=bl["longitude"],latitude__lte=tr["latitude"],longitude__lte=tr["longitude"]);
 	return query;
+
+def getNearbyLoc(point,mag=1):
+	lat = point['k'];
+	lon = point['A'];
+
+	bl = {"latitude": lat-Decimal(0.00005*mag),"longitude": lon-Decimal(0.00007*mag)}
+	tr = {"latitude": lat+Decimal(0.00005*mag),"longitude": lon+Decimal(0.00007*mag)}
+
+	query = Point.objects.filter(latitude__gte=bl["latitude"],longitude__gte=bl["longitude"],latitude__lte=tr["latitude"],longitude__lte=tr["longitude"]);
+	return query;
+

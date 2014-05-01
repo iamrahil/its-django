@@ -117,6 +117,7 @@ def assmilate(request):
 
 import vis.engine.initial as Network
 from django.http import HttpResponse
+from decimal import Decimal
 import json
 def shortestpath(request):
 	if request.GET:
@@ -124,5 +125,15 @@ def shortestpath(request):
 		beta = int(request.GET.get('beta'));
 		level = int(request.GET.get('access'));
 		obj = Network.shortestpath(alpha,beta,level)
+		jsondata = json.dumps(obj);
+		return HttpResponse(jsondata,content_type='application/json');
+
+def propogate(request):
+	if request.GET:
+		alpha = {'k':Decimal(request.GET.get('from_lat')),'A':Decimal(request.GET.get('from_lng'))};
+		beta = {'k':Decimal(request.GET.get('to_lat')),'A':Decimal(request.GET.get('to_lng'))};
+		level = request.GET.get('access');
+
+		obj = Network.generic_shortestpath(alpha,beta,level);
 		jsondata = json.dumps(obj);
 		return HttpResponse(jsondata,content_type='application/json');

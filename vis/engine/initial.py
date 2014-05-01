@@ -134,7 +134,7 @@ print "Building Cycle Network";
 print "Building Pedestrian Network";
 pedestrian_network(PEDESTRIAN);
 
-def shortestpath(alpha,beta,level):
+def shortestpath(alpha,beta,level=3):
 	if level is 0:
 		graph = CAR;
 	elif level is 1:
@@ -144,8 +144,7 @@ def shortestpath(alpha,beta,level):
 	elif level is 3:
 		graph = PEDESTRIAN;
 	else :
-		path=None;
-		weight=None;
+		graph=PEDESTRIAN;
 	
 	path = nx.dijkstra_path(graph,alpha,beta);
 	weight = nx.dijkstra_path_length(graph,alpha,beta);
@@ -194,3 +193,81 @@ def getsplitpath(path, source, destin):
 					return 0;
 
 	return locarray;
+
+def getNearestPoint(source):
+	magnification = 1;
+	path_points = getNearby(source,magnification);
+	while len(path_points) is 0:
+		magnification = magnification * 1.5;
+		path_points = getNearby(source,magnification);
+
+	#get nearest point of source
+	min_point = Point();
+	min_dist = 20000000;
+	for point in path_points:
+		dist = pointDistance(source,point);
+		if dist < min_dist:
+			min_point = point;
+			min_dist = dist;
+	return min_point;
+
+
+def generic_shortestpath(source_loc,destination_loc,access=3):
+	source = Point();
+	source.latitude = source_loc['k'];
+	source.longitude = source_loc['A'];
+	dest = Point();
+	dest.latitude = destination_loc['k'];
+	dest.longitude = destination_loc['A'];
+	
+	min_source = getNearestPoint(source);
+	min_dest = getNearestPoint(dest);
+	
+	#get nearest junctions
+	#Upstream
+	point = min_source;
+	while not point.is_junction:
+		if point is min_dest:
+			#Ditch ho gaya life se
+			#TODO: Implement this
+			pass;
+		point = point.next_point;
+	upstream_src = point.junction;
+	#downstream
+	point = min_source;
+	while not point.is_junction:
+		if point is min_dest:
+			#Ditch ho gaya life se
+			#TODO: Implement this
+			pass;
+		point = point.prev_point;
+	downstream_src = point.junction;
+
+	#for destinations, the same
+	point = min_dest;
+	while not point.is_junction:
+		if point is min_source:
+			#Ditch ho gaya life se
+			#TODO: Implement this
+			pass;
+		point = point.next_point;
+	upstream_dest = point.junction;
+	#downstream
+	point = min_dest;
+	while not point.is_junction:
+		if point is min_source:
+			#Ditch ho gaya life se
+			#TODO: Implement this
+			pass;
+		point = point.prev_point;
+	downstream_dest = point.junction;
+
+	#The four combinations
+	shortest = min([
+					shortestpath(downstream_src.id,downstream_dest.id,int(access)),
+					shortestpath(downstream_src.id,upstream_dest.id,int(access)),
+					shortestpath(upstream_src.id,downstream_dest.id,int(access)),
+					shortestpath(upstream_src.id,upstream_dest.id,int(access))
+					],key=lambda x: x['length']);
+
+	return shortest;
