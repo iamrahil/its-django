@@ -1,4 +1,9 @@
-{% for item in junctions %}
-<p>Added Junction : <strong>{{item.id}}</strong></p>
-{% endfor %}
-<a href="/attach"><button>GO BACK</button></a>
+<head>
+	<title>Junction Added</title>
+</head>
+<body>
+	{% for item in junctions %}
+	<p>Added Junction : <strong>{{item.id}}</strong></p>
+	{% endfor %}
+	<a href="/attach"><button>GO BACK</button></a>
+</body>
