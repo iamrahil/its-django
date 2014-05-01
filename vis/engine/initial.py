@@ -128,8 +128,69 @@ def pedestrian_network(G): #Pedestrians, i.e access level 0,1,2,3
 				G.add_edge(junction.id,downjunct.id,weight=downdist);
 
 print "Building Car Network";
-car_network(CAR);
+# car_network(CAR);
 print "Building Cycle Network";
-cycle_network(CYCLE);
+# cycle_network(CYCLE);
 print "Building Pedestrian Network";
 pedestrian_network(PEDESTRIAN);
+
+def shortestpath(alpha,beta,level):
+	if level is 0:
+		graph = CAR;
+	elif level is 1:
+		graph = CAR;
+	elif level is 2:
+		graph = CYCLE;
+	elif level is 3:
+		graph = PEDESTRIAN;
+	else :
+		path=None;
+		weight=None;
+	
+	path = nx.dijkstra_path(graph,alpha,beta);
+	weight = nx.dijkstra_path_length(graph,alpha,beta);
+
+	details={};
+	for i in zip(path,path[1:]):
+		# TODO: add access
+		p =Path.objects.filter(junction=i[0]).get(junction=i[1]).id;
+		details[i[0]]={
+			"length": int(graph.edge[i[0]][i[1]]['weight']),
+			"path": p,
+			"end":i[1],
+			"points": getsplitpath(p,i[0],i[1])
+		}
+		
+	obj = {"length":int(weight),"array":path,"details":details}
+	
+	return obj;
+
+#TODO Check this function for edge cases
+def getsplitpath(path, source, destin):
+	start = Point.objects.get(junction=source,path=path);
+	point = start;
+	locarray = [start.getLocation()];
+
+	direction = True; #True for forward, False for back
+	while True:
+		point = point.next_point if direction else point.prev_point;
+		if point is None:
+			locarray = [start.getLocation()];
+			point = start;
+			direction = not direction;
+			continue;
+
+		locarray.append(point.getLocation());
+
+		if point.is_junction:
+			if point.junction.id is destin:
+				break;
+			else:
+				if direction:
+					locarray = [start.getLocation()];
+					point = start;
+					direction = not direction;
+				else:
+					return 0;
+
+	return locarray;

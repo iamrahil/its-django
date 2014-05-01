@@ -20,6 +20,10 @@ class Point(models.Model):
     def __unicode__(self):
         return self.name;
 
+    def getLocation(self):
+        return {"id":self.id,"k":float(self.latitude),"A":float(self.longitude)};
+
+
 class Junction(models.Model):
     location = GeopositionField();
     latitude = models.DecimalField(max_digits=12,decimal_places=10,default=0);

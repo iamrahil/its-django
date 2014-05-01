@@ -113,6 +113,8 @@ def assmilate(request):
 		return render_to_response('find.html',c);
 	return render_to_response('find.html',{})
 
+
+
 import vis.engine.initial as Network
 from django.http import HttpResponse
 import json
@@ -121,21 +123,6 @@ def shortestpath(request):
 		alpha = int(request.GET.get('alpha'));
 		beta = int(request.GET.get('beta'));
 		level = int(request.GET.get('access'));
-		if level is 0:
-			path = Network.nx.dijkstra_path(Network.CAR,alpha,beta);
-			weight = Network.nx.dijkstra_path_length(Network.CAR,alpha,beta);
-		elif level is 1:
-			path = Network.nx.dijkstra_path(Network.CAR,alpha,beta);
-			weight = Network.nx.dijkstra_path_length(Network.CAR,alpha,beta);
-		elif level is 2:
-			path = Network.nx.dijkstra_path(Network.CYCLE,alpha,beta);
-			weight = Network.nx.dijkstra_path_length(Network.CYCLE,alpha,beta);
-		elif level is 3:
-			path = Network.nx.dijkstra_path(Network.PEDESTRIAN,alpha,beta);
-			weight = Network.nx.dijkstra_path_length(Network.PEDESTRIAN,alpha,beta);
-		else :
-			path=None;
-			weight=None;
-		obj = {"length":weight,"array":path}
+		obj = Network.shortestpath(alpha,beta,level)
 		jsondata = json.dumps(obj);
 		return HttpResponse(jsondata,content_type='application/json');
