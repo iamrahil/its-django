@@ -164,6 +164,8 @@ def shortestpath(alpha,beta,level=3):
 	obj = {"length":int(weight),"array":path,"details":details}
 	
 	return obj;
+
+
 def getDirection(junction,frompath,topath):
 	pass;
 #TODO Check this function for edge cases
@@ -207,6 +209,14 @@ def generic_shortestpath(source_loc,destination_loc,access=3):
 	min_source = getNearestPoint(source);
 	min_dest = getNearestPoint(dest);
 	
+	sud=0 #src_upstream_distance=0;
+	sdd=0 #src_downstream_distance=0;
+	dud=0 #dest_upstream_distance=0;
+	ddd=0 #dest_downstream_distance=0;
+	su=[min_source.getLocation()];
+	sd=[min_source.getLocation()];
+	du=[min_dest.getLocation()];
+	dd=[min_dest.getLocation()];
 	#get nearest junctions
 	#Upstream
 	point = min_source;
@@ -215,7 +225,9 @@ def generic_shortestpath(source_loc,destination_loc,access=3):
 			#Ditch ho gaya life se
 			#TODO: Implement this
 			pass;
+		sud = sud + pointDistance(point,point.next_point);
 		point = point.next_point;
+		su.append(point.getLocation());
 	upstream_src = point.junction;
 	#downstream
 	point = min_source;
@@ -224,7 +236,9 @@ def generic_shortestpath(source_loc,destination_loc,access=3):
 			#Ditch ho gaya life se
 			#TODO: Implement this
 			pass;
+		sdd = sdd + pointDistance(point,point.next_point);
 		point = point.prev_point;
+		sd.append(point.getLocation());
 	downstream_src = point.junction;
 
 	#for destinations, the same
@@ -234,7 +248,9 @@ def generic_shortestpath(source_loc,destination_loc,access=3):
 			#Ditch ho gaya life se
 			#TODO: Implement this
 			pass;
+			dud = dud + pointDistance(point,point.next_point);
 		point = point.next_point;
+		du.append(point.getLocation());
 	upstream_dest = point.junction;
 	#downstream
 	point = min_dest;
@@ -243,15 +259,19 @@ def generic_shortestpath(source_loc,destination_loc,access=3):
 			#Ditch ho gaya life se
 			#TODO: Implement this
 			pass;
+		ddd = ddd + pointDistance(point,point.next_point);
 		point = point.prev_point;
+		dd.append(point.getLocation());
 	downstream_dest = point.junction;
 
 	#The four combinations
 	shortest = min([
-					shortestpath(downstream_src.id,downstream_dest.id,int(access)),
-					shortestpath(downstream_src.id,upstream_dest.id,int(access)),
-					shortestpath(upstream_src.id,downstream_dest.id,int(access)),
-					shortestpath(upstream_src.id,upstream_dest.id,int(access))
-					],key=lambda x: x['length']);
-
-	return shortest;
+					{"from":(sdd,sd),"to":(ddd,dd),"path":shortestpath(downstream_src.id,downstream_dest.id,int(access))},
+					{"from":(sdd,sd),"to":(dud,du),"path":shortestpath(downstream_src.id,upstream_dest.id,int(access))},
+					{"from":(sud,su),"to":(ddd,dd),"path":shortestpath(upstream_src.id,downstream_dest.id,int(access))},
+					{"from":(sud,su),"to":(dud,du),"path":shortestpath(upstream_src.id,upstream_dest.id,int(access))}
+					],key=lambda x: x['from'][0]+x['path']['length']+x['to'][0]);
+	shortest['path']['details']['init'] = {"length":shortest['from'][0],"points":shortest['from'][1]};
+	shortest['path']['details']['fin'] = {"length":shortest['to'][0],"points":shortest['to'][1][::-1]};
+	#min_source->array[0]&&arra[-1]->min_dest
+	return shortest['path'];
