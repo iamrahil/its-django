@@ -128,9 +128,9 @@ def pedestrian_network(G): #Pedestrians, i.e access level 0,1,2,3
 				G.add_edge(junction.id,downjunct.id,weight=downdist);
 
 print "Building Car Network";
-# car_network(CAR);
+car_network(CAR);
 print "Building Cycle Network";
-# cycle_network(CYCLE);
+cycle_network(CYCLE);
 print "Building Pedestrian Network";
 pedestrian_network(PEDESTRIAN);
 
@@ -153,10 +153,12 @@ def shortestpath(alpha,beta,level=3):
 	details={};
 	for i in zip(path,path[1:]):
 		# TODO: add access
+		p_name =Path.objects.filter(junction=i[0]).get(junction=i[1]).name;
 		p =Path.objects.filter(junction=i[0]).get(junction=i[1]).id;
 		details[i[0]]={
 			"length": int(graph.edge[i[0]][i[1]]['weight']),
 			"path": p,
+			"path_name": p_name,
 			"end":i[1],
 			"points": getsplitpath(p,i[0],i[1])
 		}
