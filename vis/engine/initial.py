@@ -64,6 +64,33 @@ def travelDown(junction,path):
 			return point.junction, distance;
 
 
+def travelTime(junction,path,direction,access=3):
+	#Speed in m/s
+	ped = 1.2;
+	car_0 = 11.11;
+	car_1 = 8.33;
+	bike = 3.33;
+
+	time = 0 ;
+	if direction is 1:
+		junct,dist = travelUp(junction,path);
+	elif direction is -1:
+		junct,dist = travelDown(junction,path);
+
+	if access is 3:
+		time = float(dist)/ped;
+	elif access is 2:
+		time = float(dist)/bike;
+	elif access <= 1:
+		if path.access is 0:
+			time = float(dist)/car_0;
+		elif path.access is 1:
+			time = float(dist)/car_1;
+	else:
+		raise AttributeError;
+
+	return junct,dist,time;
+
 def car_network(G): #Roads, i.e access level 0,1
 	#Add junctions as nodes
 
@@ -75,15 +102,15 @@ def car_network(G): #Roads, i.e access level 0,1
 		#Get Path of junction
 		for path in junction.paths.filter(access__lte=1):
 			#Travel in forward direction
-			upjunct,updist = travelUp(junction,path);
+			upjunct,updist,uptime = travelTime(junction,path,1,1);
 			# print junction.id;
 			# import pdb;pdb.set_trace();
-			downjunct,downdist = travelDown(junction,path);
+			downjunct,downdist,downtime = travelTime(junction,path,-1,1);
 			# print junction.id;
 			if upjunct != None:
-				G.add_edge(junction.id,upjunct.id,weight=updist);
+				G.add_edge(junction.id,upjunct.id,weight=updist,time=uptime);
 			if downjunct != None:
-				G.add_edge(junction.id,downjunct.id,weight=downdist);
+				G.add_edge(junction.id,downjunct.id,weight=downdist,time=downtime);
 
 def cycle_network(G): #Bycicles, i.e access level 0,1,2
 	#Add junctions as nodes
@@ -96,15 +123,15 @@ def cycle_network(G): #Bycicles, i.e access level 0,1,2
 		#Get Path of junction
 		for path in junction.paths.filter(access__lte=2):
 			#Travel in forward direction
-			upjunct,updist = travelUp(junction,path);
+			upjunct,updist,uptime = travelTime(junction,path,1,1);
 			# print junction.id;
 			# import pdb;pdb.set_trace();
-			downjunct,downdist = travelDown(junction,path);
+			downjunct,downdist,downtime = travelTime(junction,path,-1,1);
 			# print junction.id;
 			if upjunct != None:
-				G.add_edge(junction.id,upjunct.id,weight=updist);
+				G.add_edge(junction.id,upjunct.id,weight=updist,time=uptime);
 			if downjunct != None:
-				G.add_edge(junction.id,downjunct.id,weight=downdist);
+				G.add_edge(junction.id,downjunct.id,weight=downdist,time=downtime);
 
 def pedestrian_network(G): #Pedestrians, i.e access level 0,1,2,3
 	#Add junctions as nodes
@@ -117,15 +144,15 @@ def pedestrian_network(G): #Pedestrians, i.e access level 0,1,2,3
 		#Get Path of junction
 		for path in junction.paths.filter(access__lte=3):
 			#Travel in forward direction
-			upjunct,updist = travelUp(junction,path);
+			upjunct,updist,uptime = travelTime(junction,path,1,1);
 			# print junction.id;
 			# import pdb;pdb.set_trace();
-			downjunct,downdist = travelDown(junction,path);
+			downjunct,downdist,downtime = travelTime(junction,path,-1,1);
 			# print junction.id;
 			if upjunct != None:
-				G.add_edge(junction.id,upjunct.id,weight=updist);
+				G.add_edge(junction.id,upjunct.id,weight=updist,time=uptime);
 			if downjunct != None:
-				G.add_edge(junction.id,downjunct.id,weight=downdist);
+				G.add_edge(junction.id,downjunct.id,weight=downdist,time=downtime);
 
 print "Building Car Network";
 car_network(CAR);
@@ -147,8 +174,8 @@ def shortestpath(alpha,beta,level=3):
 	else :
 		graph=PEDESTRIAN;
 	
-	path = nx.dijkstra_path(graph,alpha,beta);
-	weight = nx.dijkstra_path_length(graph,alpha,beta);
+	path = nx.dijkstra_path(graph,alpha,beta,"time");
+	weight = nx.dijkstra_path_length(graph,alpha,beta,"time");
 
 	details={};
 	for i in zip(path,path[1:]):
@@ -157,6 +184,7 @@ def shortestpath(alpha,beta,level=3):
 		p =Path.objects.filter(junction=i[0]).get(junction=i[1]).id;
 		details[i[0]]={
 			"length": int(graph.edge[i[0]][i[1]]['weight']),
+			"time": int(graph.edge[i[0]][i[1]]['time']),
 			"path": p,
 			"path_name": p_name,
 			"end":i[1],
