@@ -51,3 +51,6 @@ class Location(models.Model):
     name = models.TextField();
     information = models.TextField(blank=True);
     field_type = models.CharField(max_length=1);
+
+    def __unicode__(self):
+        return self.name;
