@@ -12,7 +12,7 @@ def login(request):
 	c={};
 	c.update(csrf(request))
 	return render_to_response('path.html',c);
-
+#voila!
 def test(request):
 	c={};
 	c.update(csrf(request))
