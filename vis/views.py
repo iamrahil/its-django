@@ -17,7 +17,7 @@ def test(request):
 	c={};
 	c.update(csrf(request))
 	return render_to_response('test.html',c);
-
+#CHANGE!
 def preview(request):
 	c={};
 	c.update(csrf(request))
