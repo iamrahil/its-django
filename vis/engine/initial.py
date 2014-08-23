@@ -205,6 +205,14 @@ def getsplitpath(path, source, destin):
 	return locarray;
 
 def generic_shortestpath(source_loc,destination_loc,access=3):
+	"""
+	Calculates shortest path for general points, not necessarily
+	in the database
+	@param source_loc = source point
+	@param destination_loc = destination point
+	@param access level needed
+	"""
+
 	source = Point();
 	source.latitude = source_loc['k'];
 	source.longitude = source_loc['A'];
@@ -213,20 +221,22 @@ def generic_shortestpath(source_loc,destination_loc,access=3):
 	dest.longitude = destination_loc['A'];
 	
 	min_source = getNearestPoint(source,access);
-	#print min_source.getLocation();
+	
 	min_dest = getNearestPoint(dest,access);
-	#print min_dest.getLocation();
 	
 	
-	sud=0 #src_upstream_distance=0;
-	sdd=0 #src_downstream_distance=0;
-	dud=0 #dest_upstream_distance=0;
-	ddd=0 #dest_downstream_distance=0;
-	su=[min_source.getLocation()];
-	sd=[min_source.getLocation()];
-	du=[min_dest.getLocation()];
-	dd=[min_dest.getLocation()];
+	src_upstream_distance=0;
+	src_downstream_distance=0;
+	dest_upstream_distance=0;
+	dest_downstream_distance=0;
+
+	src_upstream=[min_source.getLocation()];
+	src_downstream=[min_source.getLocation()];
+	dst_upstream=[min_dest.getLocation()];
+	dst_downstream=[min_dest.getLocation()];
+
 	#get nearest junctions
+	
 	#Upstream
 	point = min_source;
 	while not point.is_junction:
@@ -234,20 +244,21 @@ def generic_shortestpath(source_loc,destination_loc,access=3):
 			#Ditch ho gaya life se
 			#TODO: Implement this
 			pass;
-		sud = sud + pointDistance(point,point.next_point);
+		src_upstream_distance = src_upstream_distance + pointDistance(point,point.next_point);
 		point = point.next_point;
-		su.append(point.getLocation());
+		src_upstream.append(point.getLocation());	
 	upstream_src = point.junction;
-	#downstream
+	
+	#Downstream
 	point = min_source;
 	while not point.is_junction:
 		if point is min_dest:
 			#Ditch ho gaya life se
 			#TODO: Implement this
 			pass;
-		sdd = sdd + pointDistance(point,point.next_point);
+		src_downstream_distance = src_downstream_distance + pointDistance(point,point.prev_point);
 		point = point.prev_point;
-		sd.append(point.getLocation());
+		src_downstream.append(point.getLocation());
 	downstream_src = point.junction;
 
 	#for destinations, the same
@@ -257,9 +268,9 @@ def generic_shortestpath(source_loc,destination_loc,access=3):
 			#Ditch ho gaya life se
 			#TODO: Implement this
 			pass;
-			dud = dud + pointDistance(point,point.next_point);
+		dest_upstream_distance = dest_upstream_distance + pointDistance(point,point.next_point);
 		point = point.next_point;
-		du.append(point.getLocation());
+		dst_upstream.append(point.getLocation());
 	upstream_dest = point.junction;
 	#downstream
 	point = min_dest;
@@ -268,17 +279,17 @@ def generic_shortestpath(source_loc,destination_loc,access=3):
 			#Ditch ho gaya life se
 			#TODO: Implement this
 			pass;
-		ddd = ddd + pointDistance(point,point.next_point);
+		dest_downstream_distance = dest_downstream_distance + pointDistance(point,point.prev_point);
 		point = point.prev_point;
-		dd.append(point.getLocation());
+		dst_downstream.append(point.getLocation());
 	downstream_dest = point.junction;
 	
 	#The four combinations
 	shortest = min([
-					{"from":(sdd,sd),"to":(ddd,dd),"path":shortestpath(downstream_src.id,downstream_dest.id,int(access))},
-					{"from":(sdd,sd),"to":(dud,du),"path":shortestpath(downstream_src.id,upstream_dest.id,int(access))},
-					{"from":(sud,su),"to":(ddd,dd),"path":shortestpath(upstream_src.id,downstream_dest.id,int(access))},
-					{"from":(sud,su),"to":(dud,du),"path":shortestpath(upstream_src.id,upstream_dest.id,int(access))}
+					{"from":(src_downstream_distance,src_downstream),"to":(dest_downstream_distance,dst_downstream),"path":shortestpath(downstream_src.id,downstream_dest.id,int(access))},
+					{"from":(src_downstream_distance,src_downstream),"to":(dest_upstream_distance,dst_upstream),"path":shortestpath(downstream_src.id,upstream_dest.id,int(access))},
+					{"from":(src_upstream_distance,src_upstream),"to":(dest_downstream_distance,dst_downstream),"path":shortestpath(upstream_src.id,downstream_dest.id,int(access))},
+					{"from":(src_upstream_distance,src_upstream),"to":(dest_upstream_distance,dst_upstream),"path":shortestpath(upstream_src.id,upstream_dest.id,int(access))}
 					],key=lambda x: x['from'][0]+x['path']['length']+x['to'][0]);
 	shortest['path']['details']['init'] = {"length":shortest['from'][0],"points":shortest['from'][1]};
 	shortest['path']['details']['fin'] = {"length":shortest['to'][0],"points":shortest['to'][1][::-1]};
