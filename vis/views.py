@@ -136,4 +136,5 @@ def propogate(request):
 
 		obj = Network.generic_shortestpath(alpha,beta,level);
 		jsondata = json.dumps(obj);
+		#print jsondata;
 		return HttpResponse(jsondata,content_type='application/json');

@@ -148,7 +148,9 @@ def shortestpath(alpha,beta,level=3):
 		graph=PEDESTRIAN;
 	
 	path = nx.dijkstra_path(graph,alpha,beta);
+	#print path;
 	weight = nx.dijkstra_path_length(graph,alpha,beta);
+	#print weight;
 
 	details={};
 	for i in zip(path,path[1:]):
@@ -164,7 +166,7 @@ def shortestpath(alpha,beta,level=3):
 		}
 		
 	obj = {"length":int(weight),"array":path,"details":details}
-	
+	#print obj;
 	return obj;
 
 
@@ -175,7 +177,9 @@ def getsplitpath(path, source, destin):
 	start = Point.objects.get(junction=source,path=path);
 	point = start;
 	locarray = [start.getLocation()];
-
+	#print path;
+	#print "First";
+	
 	direction = True; #True for forward, False for back
 	while True:
 		point = point.next_point if direction else point.prev_point;
@@ -208,8 +212,11 @@ def generic_shortestpath(source_loc,destination_loc,access=3):
 	dest.latitude = destination_loc['k'];
 	dest.longitude = destination_loc['A'];
 	
-	min_source = getNearestPoint(source);
-	min_dest = getNearestPoint(dest);
+	min_source = getNearestPoint(source,access);
+	#print min_source.getLocation();
+	min_dest = getNearestPoint(dest,access);
+	#print min_dest.getLocation();
+	
 	
 	sud=0 #src_upstream_distance=0;
 	sdd=0 #src_downstream_distance=0;
@@ -265,7 +272,7 @@ def generic_shortestpath(source_loc,destination_loc,access=3):
 		point = point.prev_point;
 		dd.append(point.getLocation());
 	downstream_dest = point.junction;
-
+	
 	#The four combinations
 	shortest = min([
 					{"from":(sdd,sd),"to":(ddd,dd),"path":shortestpath(downstream_src.id,downstream_dest.id,int(access))},
@@ -276,4 +283,5 @@ def generic_shortestpath(source_loc,destination_loc,access=3):
 	shortest['path']['details']['init'] = {"length":shortest['from'][0],"points":shortest['from'][1]};
 	shortest['path']['details']['fin'] = {"length":shortest['to'][0],"points":shortest['to'][1][::-1]};
 	#min_source->array[0]&&arra[-1]->min_dest
+	#print shortest['path']
 	return shortest['path'];

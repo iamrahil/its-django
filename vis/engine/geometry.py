@@ -24,14 +24,19 @@ def pointDistance(A, B):
 
 from decimal import *
 
-def getNearby(point,mag=1):
+def getNearby(point,mag=1,access=3):
+
+	if access == 0:
+		access=1;
+
 	lat = point.latitude;
 	lon = point.longitude;
 
 	bl = {"latitude": lat-Decimal(0.00005*mag),"longitude": lon-Decimal(0.00007*mag)}
 	tr = {"latitude": lat+Decimal(0.00005*mag),"longitude": lon+Decimal(0.00007*mag)}
 
-	query = Point.objects.filter(latitude__gte=bl["latitude"],longitude__gte=bl["longitude"],latitude__lte=tr["latitude"],longitude__lte=tr["longitude"]);
+	query = Point.objects.filter(latitude__gte=bl["latitude"],longitude__gte=bl["longitude"],latitude__lte=tr["latitude"],longitude__lte=tr["longitude"],path__access__lte=access);
+	print query;
 	return query;
 
 def getNearbyJunctions(point,mag=1):
@@ -54,12 +59,12 @@ def getNearbyLoc(point,mag=1):
 	query = Point.objects.filter(latitude__gte=bl["latitude"],longitude__gte=bl["longitude"],latitude__lte=tr["latitude"],longitude__lte=tr["longitude"]);
 	return query;
 
-def getNearestPoint(source):
+def getNearestPoint(source,access=3):
 	magnification = 1;
-	path_points = getNearby(source,magnification);
+	path_points = getNearby(source,magnification,access);
 	while len(path_points) is 0:
 		magnification = magnification * 1.5;
-		path_points = getNearby(source,magnification);
+		path_points = getNearby(source,magnification,access);
 
 	#get nearest point of source
 	min_point = Point();
@@ -69,4 +74,5 @@ def getNearestPoint(source):
 		if dist < min_dist:
 			min_point = point;
 			min_dist = dist;
+	#print min_dist;
 	return min_point;
